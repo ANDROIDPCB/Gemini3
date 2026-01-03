@@ -1,28 +1,30 @@
 {
   "name": "gemini-kinetic-particles",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.2.0",
-    "@mediapipe/tasks-vision": "^0.10.22-rc.20250304",
-    "@react-three/fiber": "^9.4.0",
-    "lucide-react": "^0.555.0",
-    "three": "^0.181.2",
-    "react-dom": "^19.2.0",
     "@google/genai": "^1.30.0",
-    "@react-three/drei": "^10.7.7",
-    "react-colorful": "^5.6.1"
+    "@mediapipe/tasks-vision": "^0.10.17",
+    "@react-three/drei": "^9.120.0",
+    "@react-three/fiber": "^9.0.0",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-colorful": "^5.6.1",
+    "react-dom": "^19.0.0",
+    "three": "^0.170.0"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
-    "@vitejs/plugin-react": "^5.0.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.170.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3"
   }
 }

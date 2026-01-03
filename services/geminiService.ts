@@ -1,21 +1,21 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Point3D } from "../types";
 
-// Initialize Gemini Client
-// Note: process.env.API_KEY is assumed to be available as per instructions.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// The API key must be obtained exclusively from the environment variable process.env.API_KEY
+const getAI = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("API Key is missing. Please configure your environment variables.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export const generateShapePoints = async (description: string, count: number = 1000): Promise<Point3D[]> => {
-  if (!process.env.API_KEY) {
-    console.warn("No API Key found. Returning empty shape.");
-    return [];
-  }
-
   try {
-    const model = 'gemini-2.5-flash';
+    const ai = getAI();
+    // Using the recommended model for basic text/JSON tasks
+    const model = 'gemini-3-flash-preview';
     
-    // We ask Gemini to mathematically construct the shape and return points
-    // This showcases its reasoning and JSON output capabilities.
     const prompt = `
       I need to visualize a 3D point cloud representing the shape of a "${description}".
       Generate exactly ${count} points distributed evenly on the surface or volume of this shape.
