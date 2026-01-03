@@ -1,27 +1,32 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Point3D } from "../types";
 
-// The API key must be obtained exclusively from the environment variable process.env.API_KEY
-const getAI = () => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error("API Key is missing. Please configure your environment variables.");
+const getApiKey = () => {
+  // Safe access to process.env
+  try {
+    return process.env.API_KEY || "";
+  } catch (e) {
+    return "";
   }
-  return new GoogleGenAI({ apiKey });
 };
 
 export const generateShapePoints = async (description: string, count: number = 1000): Promise<Point3D[]> => {
+  const apiKey = getApiKey();
+  
+  if (!apiKey) {
+    console.error("Gemini API Key is missing. Please set it in your environment variables.");
+    throw new Error("API_KEY_MISSING");
+  }
+
   try {
-    const ai = getAI();
-    // Using the recommended model for basic text/JSON tasks
+    const ai = new GoogleGenAI({ apiKey });
     const model = 'gemini-3-flash-preview';
     
     const prompt = `
       I need to visualize a 3D point cloud representing the shape of a "${description}".
       Generate exactly ${count} points distributed evenly on the surface or volume of this shape.
       Normalize the coordinates so they fit within a bounding box of -1.5 to 1.5 on all axes (x, y, z).
-      
-      Return strictly a JSON object matching the schema.
+      Return strictly a JSON object.
     `;
 
     const response = await ai.models.generateContent({
@@ -34,7 +39,6 @@ export const generateShapePoints = async (description: string, count: number = 1
           properties: {
             points: {
               type: Type.ARRAY,
-              description: `A list of ${count} 3D coordinates.`,
               items: {
                 type: Type.OBJECT,
                 properties: {
@@ -52,13 +56,13 @@ export const generateShapePoints = async (description: string, count: number = 1
     });
 
     const jsonText = response.text;
-    if (!jsonText) throw new Error("Empty response from Gemini");
+    if (!jsonText) throw new Error("Empty response");
 
     const parsed = JSON.parse(jsonText);
     return parsed.points || [];
 
   } catch (error) {
-    console.error("Gemini Shape Generation Error:", error);
+    console.error("Gemini Error:", error);
     throw error;
   }
 };
